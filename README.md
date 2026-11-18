@@ -1,5 +1,5 @@
 # Portal Dirección Académica · UNAL Sede Medellín
-## Prototipo Interactivo y Documentos de Implementación en Joomla
+## Prototipo Interactivo e Informe de Implementación en Joomla
 
 Este repositorio contiene la adaptación técnica y visual del nuevo portal de la **Dirección Académica** de la Universidad Nacional de Colombia (Sede Medellín) a partir del wireframe de Illustrator y la Guía Técnica de contenidos, modelado bajo los estándares oficiales de `sede.css`.
 
@@ -17,8 +17,7 @@ En la barra superior interactiva del sitio puedes conmutar entre las dos (2) mod
 
 ### 📑 Documentos y Entregables en PDF
 
-- **[Resumen Ejecutivo para Toma de Decisiones (PDF)](RESUMEN_EJECUTIVO_DIRECCION_ACADEMICA.pdf):** Documento conciso de 2 páginas con las cuatro (4) decisiones clave para la mesa directiva.
-- **[Informe Técnico Completo de Implementación (PDF)](INFORME_TECNICO_IMPLEMENTACION_DIRECCION_ACADEMICA.pdf):** Expediente detallado de 8 páginas con arquitectura de información, comparativa de escenarios, matriz de control y directrices CSS/HTML de `sede.css`.
+- **[Informe Técnico Completo de Implementación (PDF)](INFORME_TECNICO_IMPLEMENTACION_DIRECCION_ACADEMICA.pdf):** Expediente detallado con arquitectura de información, comparativa de escenarios y desglose pantalla por pantalla.
 - **[Wireframe Original (PDF)](wireframe%20dirección%20académica.pdf):** Bocetos gráficos de 6 vistas elaborados en Adobe Illustrator.
 - **[Guía Técnica de Desarrollo (DOCX)](Guía%20Pag.Web.docx):** Especificaciones operativas y matriz de contenidos suministrada por la Dirección Académica.
 
