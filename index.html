@@ -1,0 +1,1879 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Dirección Académica · Prototipo UNAL Sede Medellín (Web Completa vs. Artículo)</title>
+  <style>
+    /* VARIABLES INSTITUCIONALES UNAL SEDE MEDELLÍN */
+    :root {
+      --unal-gris-header-top: #555555;
+      --unal-gris-header-dark: #3a3a3a;
+      --unal-gris-nav: #444444;
+      --unal-azul-institucional: #024060;
+      --unal-teal: #017275;
+      --unal-cyan: #00a48a;
+      --unal-verde-unal: #8EB826;
+      --unal-verde-oliva: #9AB147;
+      --unal-amarillo-acento: #F7F874;
+      --unal-fondo-base: #F0EEE9;
+      --unal-texto-cuerpo: #2F3233;
+      --unal-azul-profundo: #06132D;
+      --unal-borde-gris: #D9E4EA;
+      --unal-blanco: #FFFFFF;
+      --unal-gris-claro: #F8F9FA;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background-color: var(--unal-fondo-base);
+      color: var(--unal-texto-cuerpo);
+      line-height: 1.5;
+      font-size: 15px;
+    }
+
+    /* BARRA FLOTANTE DE CONTROL DEL PROTOTIPO */
+    .proto-switcher {
+      position: sticky;
+      top: 0;
+      z-index: 9999;
+      background: #0f172a;
+      color: #fff;
+      padding: 10px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.35);
+      border-bottom: 3px solid var(--unal-verde-unal);
+    }
+    .proto-switcher__title {
+      font-weight: 700;
+      font-size: 13.5px;
+      color: var(--unal-amarillo-acento);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .proto-modes {
+      display: flex;
+      background: #1e293b;
+      padding: 3px;
+      border-radius: 6px;
+      border: 1px solid #334155;
+    }
+    .proto-mode-btn {
+      background: transparent;
+      color: #94a3b8;
+      border: none;
+      padding: 7px 16px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .proto-mode-btn.active {
+      background: var(--unal-verde-unal);
+      color: #06132D;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .proto-subtabs {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+    .proto-tab-btn {
+      background: #1e293b;
+      color: #cbd5e1;
+      border: 1px solid #475569;
+      padding: 5px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      border-radius: 4px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .proto-tab-btn:hover {
+      background: #334155;
+      color: #fff;
+    }
+    .proto-tab-btn.active {
+      background: var(--unal-teal);
+      color: #fff;
+      border-color: var(--unal-teal);
+    }
+
+    /* HEADER INSTITUCIONAL OFICIAL UNAL */
+    .unal-official-header {
+      width: 100%;
+      background: var(--unal-gris-header-top);
+      color: #ffffff;
+      display: grid;
+      grid-template-columns: 230px 1fr 90px;
+      min-height: 110px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    .unal-official-header__brand {
+      background: var(--unal-gris-header-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 20px;
+      grid-row: 1 / 3;
+    }
+    .unal-official-header__brand img {
+      width: 175px;
+      height: auto;
+      filter: brightness(0) invert(1);
+    }
+    .unal-official-header__topbar {
+      background: #505050;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 24px;
+      min-height: 40px;
+      font-size: 13px;
+      border-bottom: 1px solid #404040;
+    }
+    .domain-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: #e5e5e5;
+      font-weight: 500;
+    }
+    .domain-indicator span.pin {
+      color: var(--unal-amarillo-acento);
+    }
+    .audiences-list {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      list-style: none;
+    }
+    .audiences-list a {
+      color: #ffffff;
+      text-decoration: none;
+      padding: 6px 10px;
+      font-size: 12.5px;
+      border-right: 1px solid #666;
+      transition: background 0.2s;
+    }
+    .audiences-list a:hover {
+      background: #3f3f3f;
+      color: var(--unal-amarillo-acento);
+    }
+    .audiences-list li:last-child a {
+      border-right: none;
+    }
+    .unal-btn-moodle-tag {
+      background-color: #d96208;
+      color: #ffffff !important;
+      padding: 4px 10px !important;
+      border-radius: 3px;
+      font-weight: bold;
+      border-right: none !important;
+      margin-left: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .unal-btn-moodle-tag:hover {
+      background-color: #b55005 !important;
+    }
+
+    .unal-official-header__seal {
+      background: var(--unal-gris-header-top);
+      display: grid;
+      place-items: center;
+      grid-column: 3;
+      grid-row: 1 / 3;
+      border-left: 1px solid #484848;
+    }
+    .unal-official-header__seal img {
+      width: 58px;
+      height: 58px;
+    }
+
+    /* MENÚ HORIZONTAL OFICIAL UNAL */
+    .unal-official-nav {
+      background: var(--unal-gris-nav);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      min-height: 44px;
+      border-bottom: 4px solid var(--unal-cyan);
+    }
+    .nav-links-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      overflow-x: auto;
+    }
+    .unal-official-nav a {
+      color: #ffffff;
+      text-decoration: none;
+      padding: 12px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .unal-official-nav a:hover, .unal-official-nav a.current {
+      background: #2e2e2e;
+      color: var(--unal-amarillo-acento);
+    }
+    .unal-official-nav a.current {
+      box-shadow: inset 0 -3px 0 var(--unal-amarillo-acento);
+    }
+    .nav-caret {
+      font-size: 9px;
+      opacity: 0.7;
+    }
+    .header-search-box {
+      display: flex;
+      align-items: center;
+      background: #333333;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 12px;
+      border: 1px solid #555;
+    }
+    .header-search-box input {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 12px;
+      outline: none;
+      width: 150px;
+    }
+
+    /* ========================================================== */
+    /* VERSIÓN 1: PÁGINA WEB COMPLETA                             */
+    /* ========================================================== */
+    .web-version-container {
+      width: 100%;
+    }
+
+    /* HERO SLIDER ROTATIVO (HOME) */
+    .hero-slider-wrap {
+      position: relative;
+      width: 100% !important;
+      height: 380px;
+      background: #111;
+      overflow: hidden;
+    }
+    .hero-slide {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(6, 19, 45, 0.90) 0%, rgba(2, 64, 96, 0.78) 45%, rgba(0, 0, 0, 0.3) 100%),
+                  url('assets/images/campus-volador-bloque-41-fachada-patrimonial.webp') center/cover no-repeat;
+      display: flex;
+      align-items: center;
+      padding: 0 40px;
+    }
+    .hero-slide__inner {
+      max-width: 880px;
+      color: #ffffff;
+    }
+    .hero-badge-1867 {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(247, 248, 116, 0.95);
+      color: #06132D;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 4px;
+      margin-bottom: 14px;
+    }
+    .hero-slide__title {
+      font-size: 38px;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+    .hero-slide__desc {
+      font-size: 16.5px;
+      line-height: 1.45;
+      color: #f1f5f9;
+      margin-bottom: 20px;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    }
+    .slider-dots {
+      position: absolute;
+      bottom: 20px;
+      right: 30px;
+      display: flex;
+      gap: 8px;
+    }
+    .slider-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.4);
+      cursor: pointer;
+    }
+    .slider-dot.active {
+      background: var(--unal-amarillo-acento);
+      transform: scale(1.2);
+    }
+
+    /* BOTONES INSTITUCIONALES DE COLOR (EXACTOS A CAPTURA FOTO 3) */
+    .institutional-buttons-bar {
+      width: 100%;
+      background: var(--unal-fondo-base);
+      padding: 24px 20px 10px 20px;
+      display: flex;
+      justify-content: center;
+    }
+    .institutional-buttons-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      width: 100%;
+      max-width: 1300px;
+    }
+    @media (max-width: 1050px) {
+      .institutional-buttons-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    @media (max-width: 700px) {
+      .institutional-buttons-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .inst-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 16px 14px;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: 8px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+      transition: all 0.2s ease;
+      min-height: 62px;
+      line-height: 1.25;
+    }
+    .inst-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+      filter: brightness(1.08);
+      color: #fff;
+    }
+    .inst-btn--1 { background-color: #024060; } /* Azul Petróleo */
+    .inst-btn--2 { background-color: #00a48a; } /* Turquesa Cyan */
+    .inst-btn--3 { background-color: #00966c; } /* Verde Esmeralda */
+    .inst-btn--4 { background-color: #06132D; } /* Azul Noche */
+    .inst-btn--5 { background-color: #9ab147; } /* Verde Oliva */
+
+    /* CONTENEDOR GENERAL DE PÁGINA */
+    .page-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 25px 20px 50px 20px;
+    }
+
+    /* PANELES DE CONTENIDO EN MODO WEB (SUBPÁGINAS) */
+    .web-page-panel {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    .web-page-panel.active {
+      display: block;
+    }
+
+    /* ENCABEZADOS Y MIGAS */
+    .section-header-unal {
+      border-left: 5px solid var(--unal-verde-unal);
+      padding-left: 14px;
+      margin: 25px 0 20px 0;
+    }
+    .section-header-unal h2 {
+      font-size: 24px;
+      color: var(--unal-azul-institucional);
+      font-weight: 800;
+    }
+    .section-header-unal p {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .breadcrumbs {
+      font-size: 13px;
+      color: #777;
+      margin-bottom: 20px;
+    }
+    .breadcrumbs a {
+      color: var(--unal-teal);
+      text-decoration: none;
+    }
+
+    /* TARJETAS INSTITUCIONALES SEDE MEDELLÍN */
+    .card-grid-5 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+    .sede-card {
+      background: var(--unal-blanco);
+      border: 1px solid var(--unal-borde-gris);
+      border-radius: 6px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-decoration: none;
+      color: inherit;
+      border-top: 4px solid var(--unal-teal);
+      transition: all 0.2s;
+    }
+    .sede-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+      border-top-color: var(--unal-verde-unal);
+    }
+    .sede-card__icon {
+      font-size: 26px;
+      margin-bottom: 10px;
+      color: var(--unal-azul-institucional);
+    }
+    .sede-card__title {
+      font-size: 16.5px;
+      font-weight: 700;
+      color: var(--unal-azul-institucional);
+      margin-bottom: 6px;
+    }
+    .sede-card__desc {
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 12px;
+      flex-grow: 1;
+    }
+    .sede-card__link {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--unal-teal);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* NOTICIAS */
+    .two-cols {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 28px;
+      margin-bottom: 35px;
+    }
+    @media (max-width: 900px) {
+      .two-cols {
+        grid-template-columns: 1fr;
+      }
+    }
+    .news-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+    }
+    .news-card-item {
+      background: #fff;
+      border: 1px solid var(--unal-borde-gris);
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .news-card-item img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
+    .news-card-item__content {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-grow: 1;
+    }
+    .tag-category {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--unal-azul-institucional);
+      background: #e1f0f7;
+      padding: 2px 8px;
+      border-radius: 3px;
+      align-self: flex-start;
+      margin-bottom: 8px;
+    }
+    .news-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--unal-azul-institucional);
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    /* MÓDULOS TRANSVERSALES (5.0, 6.0, 7.0) */
+    .transversal-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 18px;
+      margin: 25px 0 35px 0;
+    }
+    .transversal-box {
+      background: #fff;
+      border: 1px solid var(--unal-borde-gris);
+      border-radius: 6px;
+      padding: 22px;
+      border-top: 4px solid var(--unal-teal);
+    }
+    .transversal-box h3 {
+      font-size: 17px;
+      color: var(--unal-azul-institucional);
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .transversal-box p {
+      font-size: 13.5px;
+      color: #555;
+      margin-bottom: 16px;
+    }
+    .dual-cta {
+      display: flex;
+      gap: 8px;
+    }
+    .dual-cta a {
+      flex: 1;
+      text-align: center;
+      padding: 8px 10px;
+      font-size: 12.5px;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      color: #333;
+      background: #f7f7f7;
+    }
+    .dual-cta a.primary {
+      background: var(--unal-verde-unal);
+      color: #06132D;
+      border-color: var(--unal-verde-unal);
+    }
+
+    /* ACORDEÓN INSTITUCIONAL */
+    .unal-accordion {
+      margin: 15px 0 30px 0;
+    }
+    .accordion-item {
+      background: #fff;
+      border: 1px solid var(--unal-borde-gris);
+      border-radius: 4px;
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+    .accordion-header {
+      padding: 13px 18px;
+      font-weight: 700;
+      font-size: 14.5px;
+      color: var(--unal-azul-institucional);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fafafa;
+      user-select: none;
+    }
+    .accordion-header:hover {
+      background: #f0f4f7;
+    }
+    .accordion-content {
+      padding: 16px 18px;
+      font-size: 14px;
+      display: none;
+      border-top: 1px solid var(--unal-borde-gris);
+      background: #fff;
+    }
+    .accordion-content.show {
+      display: block;
+    }
+
+    /* DIRECTORIO DE EQUIPO */
+    .equipo-filters {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .filter-chip {
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: #fff;
+      border: 1px solid var(--unal-borde-gris);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-chip.active, .filter-chip:hover {
+      background: var(--unal-azul-institucional);
+      color: #fff;
+      border-color: var(--unal-azul-institucional);
+    }
+    .equipo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 16px;
+    }
+    .equipo-card {
+      background: #fff;
+      border: 1px solid var(--unal-borde-gris);
+      border-radius: 6px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+    }
+    .equipo-card__area {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--unal-teal);
+      margin-bottom: 6px;
+    }
+    .equipo-card__nombre {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--unal-azul-institucional);
+      margin-bottom: 4px;
+    }
+    .equipo-card__cargo {
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 12px;
+      flex-grow: 1;
+    }
+    .equipo-card__correo {
+      font-size: 13px;
+      color: var(--unal-teal);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+    }
+
+    /* TABLA INSTITUCIONAL */
+    .table-resp {
+      width: 100%;
+      overflow-x: auto;
+      margin-bottom: 25px;
+      border: 1px solid var(--unal-borde-gris);
+      border-radius: 6px;
+      background: #fff;
+    }
+    .unal-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+    .unal-table th {
+      background: var(--unal-azul-institucional);
+      color: #fff;
+      padding: 11px 14px;
+      text-align: left;
+    }
+    .unal-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--unal-borde-gris);
+    }
+    .unal-table tr:hover {
+      background: #f7fafc;
+    }
+
+    /* INFOGRAFÍAS INTERACTIVAS (PREGRADO / POSGRADO) */
+    .infografia-box {
+      background: #fff;
+      border: 1px solid var(--unal-borde-gris);
+      border-radius: 6px;
+      padding: 22px;
+      margin-bottom: 25px;
+    }
+    .infografia-visual-mock {
+      background: #eef5f8;
+      border: 2px dashed var(--unal-teal);
+      border-radius: 6px;
+      padding: 24px;
+      text-align: center;
+      margin: 15px 0;
+    }
+
+    /* PUNTO DE CONTACTO FOOTER */
+    .punto-contacto-strip {
+      background: var(--unal-azul-profundo);
+      color: #fff;
+      padding: 26px 30px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 35px;
+      border-left: 6px solid var(--unal-verde-unal);
+    }
+    .punto-contacto-strip h3 {
+      font-size: 19px;
+      margin-bottom: 4px;
+    }
+    .punto-contacto-strip p {
+      color: #cbd5e1;
+      font-size: 13.5px;
+      max-width: 600px;
+    }
+    .btn-ticket {
+      background: var(--unal-verde-unal);
+      color: #06132D;
+      padding: 12px 22px;
+      border-radius: 4px;
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    /* ========================================================== */
+    /* VERSIÓN 2: ARTÍCULO JOOMLA                                 */
+    /* (DENTRO DEL PORTAL PRINCIPAL CON QUICKNAV STICKY)          */
+    /* ========================================================== */
+    .article-version-container {
+      width: 100%;
+      display: none;
+    }
+    .joomla-component-simulation {
+      max-width: 1250px;
+      margin: 20px auto 40px auto;
+      padding: 0 20px;
+    }
+    .bo-banner-article {
+      width: 100% !important;
+      background: linear-gradient(90deg, rgba(2, 64, 96, 0.95) 0%, rgba(2, 64, 96, 0.78) 55%, rgba(1, 114, 117, 0.4) 100%),
+                  url('assets/images/campus-volador-bloque-41-fachada-patrimonial.webp') center/cover no-repeat;
+      padding: 34px 30px;
+      color: #fff;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+    .bo-banner-article h1 {
+      font-size: 30px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .bo-banner-article p {
+      font-size: 15px;
+      max-width: 850px;
+      color: #F0EEE9;
+    }
+    .article-quicknav {
+      position: sticky;
+      top: 60px;
+      z-index: 100;
+      background: #FFFFFF;
+      border: 1px solid var(--unal-borde-gris);
+      border-radius: 6px;
+      padding: 10px 16px;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    }
+    .quicknav-link {
+      background: #f1f5f9;
+      color: var(--unal-azul-institucional);
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: all 0.2s;
+      border: 1px solid #e2e8f0;
+    }
+    .quicknav-link:hover, .quicknav-link.active {
+      background: var(--unal-azul-institucional);
+      color: #ffffff;
+      border-color: var(--unal-azul-institucional);
+    }
+    .article-block {
+      background: #fff;
+      border: 1px solid var(--unal-borde-gris);
+      border-radius: 6px;
+      padding: 28px;
+      margin-bottom: 25px;
+    }
+    .article-block h2 {
+      font-size: 21px;
+      color: var(--unal-azul-institucional);
+      font-weight: 800;
+      margin-bottom: 14px;
+      border-bottom: 2px solid var(--unal-borde-gris);
+      padding-bottom: 8px;
+    }
+
+    /* FOOTER INSTITUCIONAL */
+    .unal-main-footer {
+      background: #0d1522;
+      color: #94a3b8;
+      padding: 35px 24px;
+      font-size: 13px;
+      border-top: 4px solid var(--unal-verde-unal);
+      margin-top: 40px;
+    }
+    .unal-main-footer__inner {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+    .unal-main-footer a {
+      color: #cbd5e1;
+      text-decoration: none;
+    }
+    .unal-main-footer a:hover {
+      color: #fff;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================== -->
+  <!-- BARRA DE CONTROL DEL PROTOTIPO (CONMUTADOR DE LAS 2 VERSIONES)-->
+  <!-- ========================================================== -->
+  <div class="proto-switcher">
+    <div class="proto-switcher__title">
+      <span>●</span> COMPARADOR DE IMPLEMENTACIÓN JOOMLA:
+    </div>
+
+    <!-- CONMUTADOR PRINCIPAL: PÁGINA WEB vs ARTÍCULO -->
+    <div class="proto-modes">
+      <button class="proto-mode-btn active" id="btn-mode-web" onclick="setImplementationMode('web')">
+        🌐 Versión 1: Como Página Web Completa (Portal Propio)
+      </button>
+      <button class="proto-mode-btn" id="btn-mode-article" onclick="setImplementationMode('article')">
+        📄 Versión 2: Como Artículos Joomla (Incrustado en la Sede)
+      </button>
+    </div>
+
+    <!-- PESTAÑAS DE NAVEGACIÓN COMPLETA -->
+    <div class="proto-subtabs" id="subtabs-bar">
+      <button class="proto-tab-btn active" onclick="switchWebPage('inicio')">Inicio (Home)</button>
+      <button class="proto-tab-btn" onclick="switchWebPage('quienes')">1.0 Quiénes Somos</button>
+      <button class="proto-tab-btn" onclick="switchWebPage('estudiantes')">2.0 Estudiantes</button>
+      <button class="proto-tab-btn" onclick="switchWebPage('docentes')">3.0 Docentes</button>
+      <button class="proto-tab-btn" onclick="switchWebPage('convenios')">4.0 Convenios</button>
+      <button class="proto-tab-btn" onclick="switchWebPage('externos')">5.0 Externos / Aspirantes</button>
+    
+    <div style="display: flex; gap: 6px; align-items: center;">
+      <a href="RESUMEN_EJECUTIVO_DIRECCION_ACADEMICA.pdf" target="_blank" class="proto-tab-btn" style="background:#024060; color:#fff; text-decoration:none;">📥 Resumen Ejecutivo PDF</a>
+      <a href="INFORME_TECNICO_IMPLEMENTACION_DIRECCION_ACADEMICA.pdf" target="_blank" class="proto-tab-btn" style="background:#017275; color:#fff; text-decoration:none;">📥 Informe Técnico PDF</a>
+    </div>
+</div>
+  </div>
+
+  <!-- ========================================================== -->
+  <!-- HEADER INSTITUCIONAL OFICIAL UNAL (IDÉNTICO A LAS CAPTURAS)-->
+  <!-- ========================================================== -->
+  <header class="unal-official-header">
+    <div class="unal-official-header__brand">
+      <img src="assets/escudoUnal.png" alt="Universidad Nacional de Colombia">
+    </div>
+
+    <div class="unal-official-header__topbar">
+      <div class="domain-indicator">
+        <span class="pin">📍</span>
+        <strong id="header-domain-text">academica.medellin.unal.edu.co</strong>
+      </div>
+      <ul class="audiences-list">
+        <li><a href="https://aspirantes.unal.edu.co" target="_blank">Aspirantes</a></li>
+        <li><a href="https://medellin.unal.edu.co/estudiantes/" target="_blank">Estudiantes</a></li>
+        <li><a href="https://medellin.unal.edu.co/egresados" target="_blank">Egresados</a></li>
+        <li><a href="https://medellin.unal.edu.co/docentes/" target="_blank">Docentes</a></li>
+        <li><a href="https://medellin.unal.edu.co/administrativos/" target="_blank">Administrativos</a></li>
+        <li><a href="https://unvirtual.medellin.unal.edu.co" target="_blank" class="unal-btn-moodle-tag">🎓 Moodle LMS ↗</a></li>
+      </ul>
+    </div>
+
+    <div class="unal-official-header__seal">
+      <img src="assets/sealColombia.png" alt="República de Colombia">
+    </div>
+
+    <nav class="unal-official-nav" id="main-nav-bar" style="grid-column: 2 / 4;">
+      <div class="nav-links-wrap" id="nav-links-dynamic">
+        <!-- Renderizado dinámicamente según la versión elegida -->
+      </div>
+      <div class="header-search-box">
+        <input type="text" placeholder="Buscar en la Universidad..." aria-label="Buscar">
+        <span>🔍</span>
+      </div>
+    </nav>
+  </header>
+
+
+  <!-- ========================================================== -->
+  <!-- VERSIÓN 1: PÁGINA WEB COMPLETA                             -->
+  <!-- CON TODAS SUS SUBPÁGINAS Y CONTENIDOS COMPLETOS            -->
+  <!-- ========================================================== -->
+  <div id="container-web" class="web-version-container">
+
+    <!-- SUBPÁGINA 1: INICIO (HOME) -->
+    <div id="web-page-inicio" class="web-page-panel active">
+      <!-- BANNER ROTATIVO GRANDE -->
+      <section class="hero-slider-wrap">
+        <div class="hero-slide">
+          <div class="hero-slide__inner">
+            <div class="hero-badge-1867">
+              ★ UNIVERSIDAD NACIONAL DE COLOMBIA · SEDE MEDELLÍN
+            </div>
+            <h1 class="hero-slide__title">Dirección Académica</h1>
+            <p class="hero-slide__desc">
+              Acompañamos tu formación integral con excelencia pedagógica, gestión curricular transparente y fortalecimiento del aprendizaje de toda la comunidad universitaria.
+            </p>
+          </div>
+        </div>
+        <div class="slider-dots">
+          <div class="slider-dot active" title="Slide 1"></div>
+          <div class="slider-dot" title="Slide 2"></div>
+          <div class="slider-dot" title="Slide 3"></div>
+        </div>
+      </section>
+
+      <!-- BOTONES DE COLORES INSTITUCIONALES (EXACTOS A LA FOTO 3) -->
+      <section class="institutional-buttons-bar">
+        <div class="institutional-buttons-grid">
+          <a href="#home-punto-contacto" class="inst-btn inst-btn--1">Punto de Contacto</a>
+          <a href="https://registroymatricula.medellin.unal.edu.co" target="_blank" class="inst-btn inst-btn--2">Calendarios Académicos ↗</a>
+          <a href="javascript:void(0)" onclick="switchWebPage('estudiantes')" class="inst-btn inst-btn--3">Tutorías y Grupos GEA</a>
+          <a href="javascript:void(0)" onclick="switchWebPage('estudiantes')" class="inst-btn inst-btn--4">Cursos de Idiomas</a>
+          <a href="javascript:void(0)" onclick="switchWebPage('docentes')" class="inst-btn inst-btn--5">Convocatorias Docentes</a>
+        </div>
+      </section>
+
+      <!-- CUERPO DE HOME -->
+      <div class="page-container">
+        <!-- 5 SERVICIOS DESTACADOS (DEL MOCKUP Y LA GUÍA) -->
+        <div class="section-header-unal">
+          <h2>Servicios Académicos Destacados</h2>
+          <p>Accesos directos a los programas centrales de la Dirección Académica</p>
+        </div>
+        <div class="card-grid-5">
+          <a href="javascript:void(0)" onclick="switchWebPage('estudiantes')" class="sede-card">
+            <div>
+              <div class="sede-card__icon">📝</div>
+              <div class="sede-card__title">Saber Pro</div>
+              <div class="sede-card__desc">Instrucciones, requisitos y cronograma oficial para las pruebas de estado.</div>
+            </div>
+            <div class="sede-card__link">Consultar requisitos →</div>
+          </a>
+          <a href="javascript:void(0)" onclick="switchWebPage('estudiantes')" class="sede-card">
+            <div>
+              <div class="sede-card__icon">🔄</div>
+              <div class="sede-card__title">Movilidad entre Sedes</div>
+              <div class="sede-card__desc">Procedimientos y formatos para cursar asignaturas en otras sedes de la Universidad.</div>
+            </div>
+            <div class="sede-card__link">Ver procedimiento →</div>
+          </a>
+          <a href="javascript:void(0)" onclick="switchWebPage('estudiantes')" class="sede-card">
+            <div>
+              <div class="sede-card__icon">👥</div>
+              <div class="sede-card__title">Grupos GEA</div>
+              <div class="sede-card__desc">Acompañamiento entre pares y tutorías en asignaturas fundamentales de ciencias y matemáticas.</div>
+            </div>
+            <div class="sede-card__link">Horarios de tutoría →</div>
+          </a>
+          <a href="javascript:void(0)" onclick="switchWebPage('estudiantes')" class="sede-card">
+            <div>
+              <div class="sede-card__icon">🌐</div>
+              <div class="sede-card__title">Cursos de Idiomas</div>
+              <div class="sede-card__desc">Asignaturas de libre elección en idiomas extranjeros ofertadas en la sede.</div>
+            </div>
+            <div class="sede-card__link">Oferta disponible →</div>
+          </a>
+          <a href="javascript:void(0)" onclick="switchWebPage('estudiantes')" class="sede-card">
+            <div>
+              <div class="sede-card__icon">📋</div>
+              <div class="sede-card__title">Solicitudes Estudiantiles</div>
+              <div class="sede-card__desc">Flujogramas oficiales de trámites para estudiantes de pregrado y posgrado.</div>
+            </div>
+            <div class="sede-card__link">Flujo de trámites →</div>
+          </a>
+        </div>
+
+        <!-- NOTICIAS + ACCESO A CALENDARIO DE REGISTRO -->
+        <div class="two-cols">
+          <div>
+            <div class="section-header-unal">
+              <h2>Noticias y Novedades Académicas</h2>
+              <p>Convocatorias, talleres y actividades de formación vigentes</p>
+            </div>
+            <div class="news-cards-grid">
+              <div class="news-card-item">
+                <img src="assets/images/estudiantes-induccion-jovenes-sonrientes-auditorio.webp" alt="Inducción">
+                <div class="news-card-item__content">
+                  <div>
+                    <span class="tag-category">Convocatoria</span>
+                    <div class="news-title">Apertura del Programa de Monitorías Académicas 2026-1</div>
+                    <p style="font-size:13px; color:#555;">Recepción de postulaciones para estudiantes de pregrado con excelencia formativa.</p>
+                  </div>
+                  <div style="font-size:12px; color:#888; margin-top:10px;">📅 18 de Noviembre de 2026</div>
+                </div>
+              </div>
+              <div class="news-card-item">
+                <img src="assets/images/bienestar-charla-informativa-programa-becas-auditorio.webp" alt="Formación">
+                <div class="news-card-item__content">
+                  <div>
+                    <span class="tag-category">Docencia</span>
+                    <div class="news-title">Jornadas de Innovación Pedagógica y Reflexión Curricular</div>
+                    <p style="font-size:13px; color:#555;">Espacios de diálogo para coordinadores y comités asesores de programa.</p>
+                  </div>
+                  <div style="font-size:12px; color:#888; margin-top:10px;">📅 12 de Noviembre de 2026</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SIDEBAR: ARTICULACIÓN CON REGISTRO (SIN DUPLICIDAD) -->
+          <div>
+            <div class="section-header-unal">
+              <h2>Calendarios Oficiales</h2>
+              <p>Canal institucional de consulta</p>
+            </div>
+            <div style="background:#fff; border:1px solid var(--unal-borde-gris); border-radius:6px; padding:20px; margin-bottom:16px;">
+              <h3 style="font-size:16px; color:var(--unal-azul-institucional); font-weight:800; margin-bottom:8px;">Fechas Oficiales de Matrícula y Grados</h3>
+              <p style="font-size:13px; color:#555; margin-bottom:14px;">
+                Para evitar inconsistencias o fechas obsoletas, los calendarios de adición/cancelación y resoluciones corresponden a la División de Registro y Matrícula.
+              </p>
+              <a href="https://registroymatricula.medellin.unal.edu.co" target="_blank" style="display:block; text-align:center; background:var(--unal-azul-institucional); color:#fff; text-decoration:none; padding:10px 14px; border-radius:4px; font-weight:700; font-size:13px;">
+                Consultar en Registro y Matrícula ↗
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- MÓDULOS DESTACADOS TRANSVERSALES EN INICIO (5.0, 6.0, 7.0) -->
+        <div class="section-header-unal">
+          <h2>Procesos Académicos Transversales</h2>
+          <p>Evaluación docente, autoevaluación e inicio de programación académica</p>
+        </div>
+        <div class="transversal-row">
+          <!-- 5.0 Evaluación Docente -->
+          <div class="transversal-box" style="border-top-color: var(--unal-verde-unal);">
+            <h3>5.0 Evaluación Docente</h3>
+            <p>Acceso al proceso semestral de valoración pedagógica del cuerpo docente por parte de la comunidad académica.</p>
+            <div class="dual-cta">
+              <a href="https://evaluaciondocente.unal.edu.co" target="_blank" class="primary">Acceso Estudiantes</a>
+              <a href="https://evaluaciondocente.unal.edu.co" target="_blank">Acceso Docentes</a>
+            </div>
+          </div>
+
+          <!-- 6.0 Autoevaluación y Acreditación -->
+          <div class="transversal-box" style="border-top-color: var(--unal-cyan);">
+            <h3>6.0 Autoevaluación y Acreditación</h3>
+            <p>Estado de los procesos de autoevaluación y acreditación institucional de alta calidad de los programas curriculares.</p>
+            <a href="#" style="display:block; text-align:center; padding:8px; background:#f1f5f9; color:var(--unal-azul-institucional); font-weight:bold; border-radius:4px; text-decoration:none; font-size:13px; border:1px solid #cbd5e1;">
+              Consultar Programas Acreditados ↗
+            </a>
+          </div>
+
+          <!-- 7.0 Programación Académica -->
+          <div class="transversal-box" style="border-top-color: var(--unal-azul-institucional);">
+            <h3>7.0 Programación Académica</h3>
+            <p>Guía procedimental por fases para el reporte y consolidación de la oferta de asignaturas por Facultades.</p>
+            <a href="https://registroymatricula.medellin.unal.edu.co" target="_blank" style="display:block; text-align:center; padding:8px; background:#f1f5f9; color:var(--unal-azul-institucional); font-weight:bold; border-radius:4px; text-decoration:none; font-size:13px; border:1px solid #cbd5e1;">
+              Ver Guía por Fases y Resoluciones ↗
+            </a>
+          </div>
+        </div>
+
+        <!-- BANNER PUNTO DE CONTACTO -->
+        <div id="home-punto-contacto" class="punto-contacto-strip">
+          <div>
+            <h3>🎧 Punto de Contacto</h3>
+            <p>Canal oficial para radicación de solicitudes, inquietudes curriculares y orientación académica de la Sede Medellín.</p>
+          </div>
+          <div>
+            <a href="https://puntodecontacto.medellin.unal.edu.co" target="_blank" class="btn-ticket">
+              Radicar en Punto de Contacto ↗
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- SUBPÁGINA 2: QUIÉNES SOMOS -->
+    <div id="web-page-quienes" class="web-page-panel">
+      <div class="page-container">
+        <div class="breadcrumbs">
+          <a href="javascript:void(0)" onclick="switchWebPage('inicio')">Inicio</a> / 1.0 Quiénes Somos
+        </div>
+        <div class="section-header-unal">
+          <h2>1.0 Quiénes Somos</h2>
+          <p>Identidad institucional, funciones normativas y directorio del equipo de trabajo</p>
+        </div>
+
+        <p style="font-size:15px; color:#444; max-width:950px; margin-bottom:25px;">
+          La Dirección Académica de la Universidad Nacional de Colombia Sede Medellín orienta, acompaña y fortalece los procesos académicos que garantizan una formación integral, crítica y de calidad.
+        </p>
+
+        <!-- 1.1 MISIÓN Y VISIÓN -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:30px;">
+          <div class="sede-card">
+            <h3 style="font-size:18px; color:var(--unal-azul-institucional); font-weight:700; margin-bottom:8px;">🎯 Nuestra Misión</h3>
+            <p style="font-size:14px; color:#555;">Contribuir al desarrollo de la formación integral de los estudiantes, mediante el acompañamiento, la orientación y la gestión académica de los programas curriculares de la Sede Medellín.</p>
+          </div>
+          <div class="sede-card">
+            <h3 style="font-size:18px; color:var(--unal-azul-institucional); font-weight:700; margin-bottom:8px;">👁️ Nuestra Visión</h3>
+            <p style="font-size:14px; color:#555;">Ser un referente en la gestión académica de la Universidad, reconocida por su calidad, innovación pedagógica y compromiso con el bienestar formativo de la sociedad.</p>
+          </div>
+        </div>
+
+        <!-- FUNCIONES EN ACORDEÓN -->
+        <h3 style="font-size:18px; color:var(--unal-azul-institucional); font-weight:800; margin-bottom:12px;">Funciones Principales y Marco Normativo</h3>
+        <div class="unal-accordion">
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAcc(this)">
+              <span>1.1.1 Acompañamiento a la Formación Integral</span>
+              <span>▼</span>
+            </div>
+            <div class="accordion-content show">
+              Fortalecimiento de habilidades transversales, apoyo a los grupos de estudio autónomo (GEA) y articulación con bienestar para la permanencia estudiantil.
+            </div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAcc(this)">
+              <span>1.1.2 Gestión de Planes Curriculares y Calidad</span>
+              <span>▼</span>
+            </div>
+            <div class="accordion-content">
+              Coordinación con los Comités Asesores de Programa para la creación, ajuste y armonización de mallas curriculares y registro calificado.
+            </div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAcc(this)">
+              <span>1.1.3 Marco Normativo y Acuerdos de Creación</span>
+              <span>▼</span>
+            </div>
+            <div class="accordion-content">
+              Consulte la normativa orgánica de la Dirección Académica: 
+              <a href="#" style="color:var(--unal-teal); font-weight:bold;">Descargar Acuerdo Institucional de Creación (PDF) 📄</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1.2 DIRECTORIO DE EQUIPO CON REGLA TÉCNICA -->
+        <h3 style="font-size:18px; color:var(--unal-azul-institucional); font-weight:800; margin-bottom:6px;">1.2 Equipo de Trabajo y Directorio</h3>
+        <p style="font-size:13px; color:#666; margin-bottom:16px;">
+          <em>Nota técnica: Se omiten teléfonos privados y correos personales @unal individuales; se publican exclusivamente correos institucionales de proceso.</em>
+        </p>
+
+        <div class="equipo-filters">
+          <button class="filter-chip active" onclick="filterTeam('todos')">Todos</button>
+          <button class="filter-chip" onclick="filterTeam('direccion')">Dirección</button>
+          <button class="filter-chip" onclick="filterTeam('curricular')">Gestión Curricular</button>
+          <button class="filter-chip" onclick="filterTeam('acompanamiento')">Acompañamiento</button>
+          <button class="filter-chip" onclick="filterTeam('administracion')">Administración</button>
+        </div>
+
+        <div class="equipo-grid">
+          <div class="equipo-card" data-area="direccion">
+            <span class="equipo-card__area">Dirección</span>
+            <div class="equipo-card__nombre">Directora de la Dirección Académica</div>
+            <div class="equipo-card__cargo">Dirección Académica · UNAL Sede Medellín</div>
+            <a href="mailto:academica_med@unal.edu.co" class="equipo-card__correo">✉ academica_med@unal.edu.co</a>
+          </div>
+          <div class="equipo-card" data-area="curricular">
+            <span class="equipo-card__area">Gestión Curricular</span>
+            <div class="equipo-card__nombre">Priscila (Coordinadora)</div>
+            <div class="equipo-card__cargo">Coordinación de Programas Curriculares y Asignaturas</div>
+            <a href="mailto:curriculo_med@unal.edu.co" class="equipo-card__correo">✉ curriculo_med@unal.edu.co</a>
+          </div>
+          <div class="equipo-card" data-area="acompanamiento">
+            <span class="equipo-card__area">Acompañamiento</span>
+            <div class="equipo-card__nombre">Equipo de Acompañamiento Estudiantil</div>
+            <div class="equipo-card__cargo">Coordinación Saber Pro y Grupos GEA</div>
+            <a href="mailto:gea_med@unal.edu.co" class="equipo-card__correo">✉ gea_med@unal.edu.co</a>
+          </div>
+          <div class="equipo-card" data-area="administracion">
+            <span class="equipo-card__area">Administración</span>
+            <div class="equipo-card__nombre">Secretaría de la Dirección</div>
+            <div class="equipo-card__cargo">Gestión Documental y Apoyo Operativo</div>
+            <a href="mailto:secacademica_med@unal.edu.co" class="equipo-card__correo">✉ secacademica_med@unal.edu.co</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- SUBPÁGINA 3: SERVICIOS PARA ESTUDIANTES -->
+    <div id="web-page-estudiantes" class="web-page-panel">
+      <div class="page-container">
+        <div class="breadcrumbs">
+          <a href="javascript:void(0)" onclick="switchWebPage('inicio')">Inicio</a> / 2.0 Servicios para Estudiantes
+        </div>
+        <div class="section-header-unal">
+          <h2>2.0 Servicios para Estudiantes</h2>
+          <p>Acompañamiento académico, tutorías, movilidad e infografías de solicitudes</p>
+        </div>
+
+        <div class="card-grid-5" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); margin-bottom:30px;">
+          <div class="sede-card">
+            <h3 class="sede-card__title">2.1 Saber Pro</h3>
+            <p class="sede-card__desc">Instrucciones, requisitos de créditos e información del examen de estado ante el Icfes.</p>
+            <a href="#" class="dual-cta a" style="display:inline-block; font-size:13px; font-weight:bold; color:var(--unal-teal);">Descargar Guía Saber Pro (PDF) 📄</a>
+          </div>
+          <div class="sede-card">
+            <h3 class="sede-card__title">2.2 Movilidad entre Sedes</h3>
+            <p class="sede-card__desc">Requisitos y formatos para cursar asignaturas en sedes Bogotá, Manizales, Palmira y de frontera.</p>
+            <a href="#" class="dual-cta a" style="display:inline-block; font-size:13px; font-weight:bold; color:var(--unal-teal);">Descargar Formato Movilidad (DOCX) 📥</a>
+          </div>
+          <div class="sede-card">
+            <h3 class="sede-card__title">2.3 Grupos GEA</h3>
+            <p class="sede-card__desc">Grupos de Estudio Autónomo. Tutorías presenciales y virtuales en asignaturas de alto impacto.</p>
+            <a href="#" class="dual-cta a" style="display:inline-block; font-size:13px; font-weight:bold; color:var(--unal-teal);">Ver Horarios Actualizados GEA ↗</a>
+          </div>
+          <div class="sede-card">
+            <h3 class="sede-card__title">2.4 Cursos de Idiomas</h3>
+            <p class="sede-card__desc">Asignaturas de libre elección: Francés, Italiano, Portugués, Explora Mundo e Intensive English. <em>(Nota: La ejecución formativa es del Centro de Idiomas)</em>.</p>
+            <a href="https://idiomas.medellin.unal.edu.co" target="_blank" class="dual-cta a" style="display:inline-block; font-size:13px; font-weight:bold; color:var(--unal-teal);">Ir al Centro de Idiomas ↗</a>
+          </div>
+        </div>
+
+        <!-- 2.5 SOLICITUDES ESTUDIANTILES (INFOGRAFÍAS PREGRADO Y POSGRADO) -->
+        <div class="infografia-box">
+          <h3 style="font-size:18px; color:var(--unal-azul-institucional); font-weight:800; margin-bottom:8px;">2.5 Solicitudes Estudiantiles (Pregrado y Posgrado)</h3>
+          <p style="font-size:14px; color:#555;">
+            Orientación visual del paso a paso que debe seguir cada estudiante para radicar y tramitar solicitudes curriculares.
+          </p>
+          <div class="infografia-visual-mock">
+            <strong style="color:var(--unal-azul-institucional); font-size:16px;">Visor de Infografías Oficiales de Trámites</strong>
+            <p style="font-size:13.5px; color:#666; margin:8px 0 16px 0;">Consulte los dos flujogramas oficiales aprobados por la Dirección Académica y Registro:</p>
+            <div style="display:flex; justify-content:center; gap:14px; flex-wrap:wrap;">
+              <a href="#" class="inst-btn inst-btn--2" style="font-size:13.5px; min-height:auto; padding:10px 18px;">📊 Infografía Pregrado (PDF)</a>
+              <a href="#" class="inst-btn inst-btn--1" style="font-size:13.5px; min-height:auto; padding:10px 18px;">📊 Infografía Posgrado (PDF)</a>
+              <a href="https://puntodecontacto.medellin.unal.edu.co" target="_blank" class="inst-btn inst-btn--5" style="font-size:13.5px; min-height:auto; padding:10px 18px; color:#06132D;">Radicar Solicitud en Punto de Contacto ↗</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQ ESTUDIANTES -->
+        <h3 style="font-size:18px; color:var(--unal-azul-institucional); font-weight:800; margin-bottom:12px;">Preguntas Frecuentes de Estudiantes</h3>
+        <div class="unal-accordion">
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAcc(this)">
+              <span>¿Cómo accedo a los grupos de acompañamiento GEA?</span>
+              <span>▼</span>
+            </div>
+            <div class="accordion-content">
+              El acceso es libre para todos los estudiantes matriculados en pregrado. Solo debes consultar la programación semanal de horarios y asistir al aula o enlace de Teams correspondiente.
+            </div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAcc(this)">
+              <span>¿Dónde radico una solicitud de doble titulación o movilidad?</span>
+              <span>▼</span>
+            </div>
+            <div class="accordion-content">
+              Todas las solicitudes se radican inicialmente a través del sistema de tickets de Punto de Contacto adjuntando el formato de solicitud diligenciado.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- SUBPÁGINA 4: SERVICIOS PARA DOCENTES -->
+    <div id="web-page-docentes" class="web-page-panel">
+      <div class="page-container">
+        <div class="breadcrumbs">
+          <a href="javascript:void(0)" onclick="switchWebPage('inicio')">Inicio</a> / 3.0 Servicios para Docentes
+        </div>
+        <div class="section-header-unal">
+          <h2>3.0 Servicios para Docentes</h2>
+          <p>Herramientas operativas, formatos curriculares, convocatorias e innovación pedagógica</p>
+        </div>
+
+        <div class="card-grid-5" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); margin-bottom:30px;">
+          <!-- 3.1 Gestión de Programas -->
+          <div class="sede-card">
+            <h3 class="sede-card__title">3.1 Gestión de Programas Curriculares</h3>
+            <p class="sede-card__desc">Herramientas técnicas, formatos y normativas dirigidas a coordinadores y comités asesores.</p>
+            <a href="#" style="color:var(--unal-teal); font-weight:bold; font-size:13px;">Descargar Formatos Curriculares 📥</a>
+          </div>
+
+          <!-- 3.2 Asignaturas -->
+          <div class="sede-card">
+            <h3 class="sede-card__title">3.2 Creación y Modificación de Asignaturas</h3>
+            <p class="sede-card__desc">Guía para el trámite de microcurrículos y apertura/ajuste de materias en el catálogo SIA.</p>
+            <a href="#" style="color:var(--unal-teal); font-weight:bold; font-size:13px;">Plantilla de Microcurrículo (DOCX) 📥</a>
+          </div>
+
+          <!-- 3.3 Reflexión Curricular -->
+          <div class="sede-card">
+            <h3 class="sede-card__title">3.3 Reflexión Curricular</h3>
+            <p class="sede-card__desc">Metodologías de autoevaluación y ajuste curricular <em>(término sustituto de Armonización)</em>.</p>
+            <a href="#" style="color:var(--unal-teal); font-weight:bold; font-size:13px;">Guías Metodológicas 📄</a>
+          </div>
+
+          <!-- 3.4 Innovación Académica -->
+          <div class="sede-card">
+            <h3 class="sede-card__title">3.4 Innovación Académica</h3>
+            <p class="sede-card__desc">Fomento a proyectos docentes e iniciativas pedagógicas <em>(término sustituto de Laboratorio)</em>.</p>
+            <a href="#" style="color:var(--unal-teal); font-weight:bold; font-size:13px;">Convocatorias Docentes Activas ↗</a>
+          </div>
+        </div>
+
+        <!-- TABLA DE DESCARGAS DE FORMATOS CURRICULARES -->
+        <h3 style="font-size:18px; color:var(--unal-azul-institucional); font-weight:800; margin-bottom:12px;">Formatos Oficiales de Trámite Curricular</h3>
+        <div class="table-resp">
+          <table class="unal-table">
+            <thead>
+              <tr>
+                <th>Código / Trámite</th>
+                <th>Nombre del Documento</th>
+                <th>Dirigido A</th>
+                <th>Descarga</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>FOR-CURR-01</strong></td>
+                <td>Plantilla Estándar para Formulación de Microcurrículos</td>
+                <td>Docentes y Comités Curriculares</td>
+                <td><a href="#" style="color:var(--unal-teal); font-weight:bold;">Descargar (.docx) 📥</a></td>
+              </tr>
+              <tr>
+                <td><strong>FOR-CURR-02</strong></td>
+                <td>Formato de Modificación o Cierre de Asignatura en SIA</td>
+                <td>Directores de Área Curricular</td>
+                <td><a href="#" style="color:var(--unal-teal); font-weight:bold;">Descargar (.docx) 📥</a></td>
+              </tr>
+              <tr>
+                <td><strong>GUIA-CURR-03</strong></td>
+                <td>Manual Metodológico de Reflexión y Actualización de Planes</td>
+                <td>Coordinadores de Programa</td>
+                <td><a href="#" style="color:var(--unal-teal); font-weight:bold;">Descargar (.pdf) 📄</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- SUBPÁGINA 5: CONVENIOS -->
+    <div id="web-page-convenios" class="web-page-panel">
+      <div class="page-container">
+        <div class="breadcrumbs">
+          <a href="javascript:void(0)" onclick="switchWebPage('inicio')">Inicio</a> / 4.0 Convenios
+        </div>
+        <div class="section-header-unal">
+          <h2>4.0 Convenios Académicos Interinstitucionales</h2>
+          <p>Oportunidades de formación posgradual y movilidad docente con instituciones externas</p>
+        </div>
+
+        <p style="font-size:14.5px; color:#555; margin-bottom:20px;">
+          Consulte los convenios vigentes suscritos por la Universidad Nacional de Colombia para la formación doctoral y pasantías de docentes y funcionarios:
+        </p>
+
+        <div class="table-resp">
+          <table class="unal-table">
+            <thead>
+              <tr>
+                <th>País</th>
+                <th>Institución / Universidad</th>
+                <th>Tipo de Formación</th>
+                <th>Requisitos Oficiales</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>España</strong></td>
+                <td>Universidad Politécnica de Valencia</td>
+                <td>Doctorado y estancia docente</td>
+                <td><a href="#" style="color:var(--unal-teal); font-weight:bold;">Ver Términos y Ficha (PDF) 📄</a></td>
+              </tr>
+              <tr>
+                <td><strong>Brasil</strong></td>
+                <td>Universidade de São Paulo (USP)</td>
+                <td>Investigación posgradual compartida</td>
+                <td><a href="#" style="color:var(--unal-teal); font-weight:bold;">Ver Términos y Ficha (PDF) 📄</a></td>
+              </tr>
+              <tr>
+                <td><strong>Alemania</strong></td>
+                <td>DAAD / Universidades Asociadas</td>
+                <td>Becas para formación doctoral</td>
+                <td><a href="#" style="color:var(--unal-teal); font-weight:bold;">Ver Términos y Ficha (PDF) 📄</a></td>
+              </tr>
+              <tr>
+                <td><strong>Francia</strong></td>
+                <td>Red de Escuelas de Ingenieros (París)</td>
+                <td>Movilidad profesoral y posgrado</td>
+                <td><a href="#" style="color:var(--unal-teal); font-weight:bold;">Ver Términos y Ficha (PDF) 📄</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <a href="#" class="inst-btn inst-btn--1" style="display:inline-block; font-size:14px; padding:12px 24px; min-height:auto;">
+          📥 Descargar Matriz Completa de Convenios Vigentes (PDF)
+        </a>
+      </div>
+    </div>
+
+
+    <!-- SUBPÁGINA 6: EXTERNOS / ASPIRANTES (RESOLUCIÓN DE LA PANTALLA 6 DEL WIREFRAME) -->
+    <div id="web-page-externos" class="web-page-panel">
+      <div class="page-container">
+        <div class="breadcrumbs">
+          <a href="javascript:void(0)" onclick="switchWebPage('inicio')">Inicio</a> / 5.0 Externos y Aspirantes
+        </div>
+        <div class="section-header-unal">
+          <h2>5.0 Orientación para Aspirantes y Comunidad Externa</h2>
+          <p>Conoce las oportunidades de estudio, cátedras abiertas y canales oficiales de la Sede</p>
+        </div>
+
+        <div style="background:#ebf5fb; border-left:4px solid var(--unal-azul-institucional); padding:16px; border-radius:4px; font-size:14px; margin-bottom:24px;">
+          <strong>Aviso sobre Procesos de Admisión y Costos:</strong> Para evitar información duplicada o desactualizada, todo el proceso de inscripción y costos oficiales se realiza exclusivamente en el portal oficial de la Dirección Nacional de Admisiones.
+        </div>
+
+        <div class="card-grid-5" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+          <div class="sede-card">
+            <h3 class="sede-card__title">Guía UNAL Aspirante</h3>
+            <p class="sede-card__desc">Conoce los requisitos, fechas de exámenes y oferta de programas de pregrado de la Universidad.</p>
+            <a href="https://admisiones.unal.edu.co" target="_blank" class="sede-card__link">Ir al Portal de Admisiones ↗</a>
+          </div>
+          <div class="sede-card">
+            <h3 class="sede-card__title">Cátedras de Sede Abiertas</h3>
+            <p class="sede-card__desc">Espacios de formación ciudadana, debate y diálogo académico abiertos a la comunidad.</p>
+            <a href="#" class="sede-card__link">Consultar Programación ↗</a>
+          </div>
+          <div class="sede-card">
+            <h3 class="sede-card__title">Cursos de Extensión (Idiomas)</h3>
+            <p class="sede-card__desc">Oferta de cursos de lenguas extranjeras ofertados para público externo por el Centro de Idiomas.</p>
+            <a href="https://idiomas.medellin.unal.edu.co" target="_blank" class="sede-card__link">Ver Centro de Idiomas ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ========================================================== -->
+  <!-- VERSIÓN 2: COMO ARTÍCULOS JOOMLA                           -->
+  <!-- (INCRUSTADO EN EL PORTAL SEDE CON QUICKNAV STICKY)         -->
+  <!-- ========================================================== -->
+  <div id="container-article" class="article-version-container">
+    <div class="joomla-component-simulation">
+
+      <!-- BANNER DE OFICINA (.bo-banner) DENTRO DEL ARTÍCULO -->
+      <div class="bo-banner-article">
+        <h1>Dirección Académica</h1>
+        <p>
+          Dependencia adscrita a la Vicerrectoría de Sede encargada de orientar, articular y fortalecer los procesos académicos, curriculares y formativos de la Universidad Nacional de Colombia Sede Medellín.
+        </p>
+      </div>
+
+      <!-- MENÚ STICKY (QUICKNAV) PARA ARTÍCULOS EXTENSOS DE LA SEDE -->
+      <nav class="article-quicknav" aria-label="Navegación del artículo">
+        <a href="#art-quienes" class="quicknav-link active">1. Quiénes Somos</a>
+        <a href="#art-directorio" class="quicknav-link">2. Directorio</a>
+        <a href="#art-estudiantes" class="quicknav-link">3. Estudiantes</a>
+        <a href="#art-solicitudes" class="quicknav-link">4. Solicitudes e Infografías</a>
+        <a href="#art-docentes" class="quicknav-link">5. Docentes</a>
+        <a href="#art-convenios" class="quicknav-link">6. Convenios</a>
+        <a href="#art-transversales" class="quicknav-link">7. Procesos Transversales</a>
+        <a href="#art-contacto" class="quicknav-link">8. Contacto</a>
+      </nav>
+
+      <!-- SECCIÓN 1: ¿QUIÉNES SOMOS? -->
+      <section id="art-quienes" class="article-block">
+        <h2>1. Quiénes Somos y Marco Normativo</h2>
+        <p style="font-size:14.5px; color:#444; margin-bottom:16px;">
+          La Dirección Académica orienta, acompaña y fortalece los procesos académicos que garantizan una formación integral, crítica y de calidad en las cinco facultades de la Sede Medellín.
+        </p>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:16px; border-radius:6px;">
+            <strong style="color:var(--unal-azul-institucional); font-size:15px;">Misión</strong>
+            <p style="font-size:13.5px; color:#555; margin-top:6px;">Contribuir al desarrollo de la formación integral de los estudiantes, mediante el acompañamiento pedagógico y la rigurosa administración curricular.</p>
+          </div>
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:16px; border-radius:6px;">
+            <strong style="color:var(--unal-azul-institucional); font-size:15px;">Visión</strong>
+            <p style="font-size:13.5px; color:#555; margin-top:6px;">Ser un referente institucional en gestión académica reconocido por su excelencia, innovación y compromiso con el desarrollo social.</p>
+          </div>
+        </div>
+        <div class="unal-accordion">
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAcc(this)">
+              <span>Funciones Generales y Acuerdo de Creación</span>
+              <span>▼</span>
+            </div>
+            <div class="accordion-content">
+              Articular y coordinar con los comités curriculares la planeación semestral, evaluar programas y gestionar acuerdos de movilidad. 
+              <a href="#" style="color:var(--unal-teal); font-weight:bold;">Descargar Norma de Creación (PDF) 📄</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 2: DIRECTORIO DE EQUIPO -->
+      <section id="art-directorio" class="article-block">
+        <h2>2. Directorio Institucional de la Dependencia</h2>
+        <p style="font-size:13.5px; color:#666; margin-bottom:16px;">
+          <em>Nómina actualizada formalmente: Se incorpora a Priscila, se retira a Fiorela y M, y se unifican buzones de proceso (sin correos individuales ni extensiones privadas).</em>
+        </p>
+        <div class="equipo-grid">
+          <div class="equipo-card">
+            <span class="equipo-card__area">Dirección</span>
+            <div class="equipo-card__nombre">Directora Académica</div>
+            <div class="equipo-card__cargo">Dirección Académica · Sede Medellín</div>
+            <a href="mailto:academica_med@unal.edu.co" class="equipo-card__correo">✉ academica_med@unal.edu.co</a>
+          </div>
+          <div class="equipo-card">
+            <span class="equipo-card__area">Gestión Curricular</span>
+            <div class="equipo-card__nombre">Priscila (Coordinadora)</div>
+            <div class="equipo-card__cargo">Coordinación de Programas Curriculares</div>
+            <a href="mailto:curriculo_med@unal.edu.co" class="equipo-card__correo">✉ curriculo_med@unal.edu.co</a>
+          </div>
+          <div class="equipo-card">
+            <span class="equipo-card__area">Acompañamiento</span>
+            <div class="equipo-card__nombre">Equipo GEA y Saber Pro</div>
+            <div class="equipo-card__cargo">Acompañamiento a Estudiantes</div>
+            <a href="mailto:gea_med@unal.edu.co" class="equipo-card__correo">✉ gea_med@unal.edu.co</a>
+          </div>
+          <div class="equipo-card">
+            <span class="equipo-card__area">Administración</span>
+            <div class="equipo-card__nombre">Secretaría de Dirección</div>
+            <div class="equipo-card__cargo">Atención Administrativa y Documental</div>
+            <a href="mailto:secacademica_med@unal.edu.co" class="equipo-card__correo">✉ secacademica_med@unal.edu.co</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 3: SERVICIOS PARA ESTUDIANTES -->
+      <section id="art-estudiantes" class="article-block">
+        <h2>3. Servicios para Estudiantes</h2>
+        <div class="card-grid-5" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
+          <div class="sede-card">
+            <h3 class="sede-card__title">2.1 Saber Pro</h3>
+            <p class="sede-card__desc">Cronogramas Icfes, guías descargables e instrucciones de registro.</p>
+            <a href="#" style="color:var(--unal-teal); font-weight:bold; font-size:13px;">Guía Saber Pro (PDF) 📄</a>
+          </div>
+          <div class="sede-card">
+            <h3 class="sede-card__title">2.2 Movilidad Intersedes</h3>
+            <p class="sede-card__desc">Formatos para cursar asignaturas en sedes andinas o de frontera.</p>
+            <a href="#" style="color:var(--unal-teal); font-weight:bold; font-size:13px;">Formato Movilidad (DOCX) 📥</a>
+          </div>
+          <div class="sede-card">
+            <h3 class="sede-card__title">2.3 Grupos GEA</h3>
+            <p class="sede-card__desc">Acompañamiento entre pares y tutorías en ciencias fundamentales.</p>
+            <a href="#" style="color:var(--unal-teal); font-weight:bold; font-size:13px;">Horarios GEA ↗</a>
+          </div>
+          <div class="sede-card">
+            <h3 class="sede-card__title">2.4 Cursos de Idiomas</h3>
+            <p class="sede-card__desc">Electivas en idiomas. <em>(La docencia es del Centro de Idiomas)</em>.</p>
+            <a href="https://idiomas.medellin.unal.edu.co" target="_blank" style="color:var(--unal-teal); font-weight:bold; font-size:13px;">Centro de Idiomas ↗</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 4: SOLICITUDES E INFOGRAFÍAS -->
+      <section id="art-solicitudes" class="article-block">
+        <h2>4. Solicitudes Estudiantiles e Infografías</h2>
+        <p style="font-size:14px; color:#555; margin-bottom:16px;">
+          Descargue los flujogramas oficiales para trámites académicos en Pregrado y Posgrado:
+        </p>
+        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+          <a href="#" class="inst-btn inst-btn--2" style="flex:1; min-width:240px; min-height:auto; padding:12px 18px;">
+            📊 Ver Infografía Trámites Pregrado (PDF)
+          </a>
+          <a href="#" class="inst-btn inst-btn--1" style="flex:1; min-width:240px; min-height:auto; padding:12px 18px;">
+            📊 Ver Infografía Trámites Posgrado (PDF)
+          </a>
+          <a href="https://puntodecontacto.medellin.unal.edu.co" target="_blank" class="inst-btn inst-btn--5" style="flex:1; min-width:240px; min-height:auto; padding:12px 18px; color:#06132D;">
+            Radicar en Punto de Contacto ↗
+          </a>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 5: SERVICIOS PARA DOCENTES -->
+      <section id="art-docentes" class="article-block">
+        <h2>5. Servicios para Docentes y Comités Curriculares</h2>
+        <div class="card-grid-5" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-bottom:20px;">
+          <div class="sede-card">
+            <h3 class="sede-card__title">3.1 Gestión de Programas</h3>
+            <p class="sede-card__desc">Formatos y lineamientos para directores y comités curriculares.</p>
+            <a href="#" style="color:var(--unal-teal); font-weight:bold; font-size:13px;">Formatos Curriculares 📥</a>
+          </div>
+          <div class="sede-card">
+            <h3 class="sede-card__title">3.2 Asignaturas</h3>
+            <p class="sede-card__desc">Procedimiento para formulación y ajuste de microcurrículos.</p>
+            <a href="#" style="color:var(--unal-teal); font-weight:bold; font-size:13px;">Plantilla Editable (DOCX) 📥</a>
+          </div>
+          <div class="sede-card">
+            <h3 class="sede-card__title">3.3 Reflexión Curricular</h3>
+            <p class="sede-card__desc">Metodologías de autoevaluación <em>(término oficial sustituto)</em>.</p>
+            <a href="#" style="color:var(--unal-teal); font-weight:bold; font-size:13px;">Guías Técnicas 📄</a>
+          </div>
+          <div class="sede-card">
+            <h3 class="sede-card__title">3.4 Innovación Académica</h3>
+            <p class="sede-card__desc">Apoyo a proyectos docentes e iniciativas pedagógicas.</p>
+            <a href="#" style="color:var(--unal-teal); font-weight:bold; font-size:13px;">Ver Convocatorias ↗</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 6: CONVENIOS -->
+      <section id="art-convenios" class="article-block">
+        <h2>6. Convenios Académicos Interinstitucionales</h2>
+        <p style="font-size:14px; color:#555; margin-bottom:14px;">
+          Cooperación con universidades externas para estudios de posgrado y movilidad docente:
+        </p>
+        <div class="table-resp">
+          <table class="unal-table">
+            <thead>
+              <tr>
+                <th>País</th>
+                <th>Institución</th>
+                <th>Alcance</th>
+                <th>Requisitos</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>España</strong></td>
+                <td>Universidad Politécnica de Valencia</td>
+                <td>Doctorado docente</td>
+                <td><a href="#" style="color:var(--unal-teal); font-weight:bold;">Términos (PDF) 📄</a></td>
+              </tr>
+              <tr>
+                <td><strong>Brasil</strong></td>
+                <td>Universidade de São Paulo (USP)</td>
+                <td>Investigación compartida</td>
+                <td><a href="#" style="color:var(--unal-teal); font-weight:bold;">Términos (PDF) 📄</a></td>
+              </tr>
+              <tr>
+                <td><strong>Alemania</strong></td>
+                <td>DAAD / Universidades Asociadas</td>
+                <td>Formación doctoral</td>
+                <td><a href="#" style="color:var(--unal-teal); font-weight:bold;">Términos (PDF) 📄</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <a href="#" class="inst-btn inst-btn--1" style="display:inline-block; font-size:13px; padding:10px 20px; min-height:auto;">
+          📥 Descargar Matriz Completa de Convenios (PDF)
+        </a>
+      </section>
+
+      <!-- SECCIÓN 7: PROCESOS TRANSVERSALES -->
+      <section id="art-transversales" class="article-block">
+        <h2>7. Procesos Académicos Transversales</h2>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:18px; border-radius:6px; border-top:4px solid var(--unal-verde-unal);">
+            <strong style="color:var(--unal-azul-institucional); font-size:16px;">5.0 Evaluación Docente</strong>
+            <p style="font-size:13.5px; color:#555; margin:8px 0 14px 0;">Proceso semestral de evaluación académica para estudiantes y docentes.</p>
+            <div class="dual-cta">
+              <a href="https://evaluaciondocente.unal.edu.co" target="_blank" class="primary">Evaluar (Estudiantes)</a>
+              <a href="https://evaluaciondocente.unal.edu.co" target="_blank">Resultados (Docentes)</a>
+            </div>
+          </div>
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:18px; border-radius:6px; border-top:4px solid var(--unal-teal);">
+            <strong style="color:var(--unal-azul-institucional); font-size:16px;">7.0 Programación Académica</strong>
+            <p style="font-size:13.5px; color:#555; margin:8px 0 14px 0;">Reporte metodológico por fases (1, 2 y 3) para la oferta semestral.</p>
+            <a href="https://registroymatricula.medellin.unal.edu.co" target="_blank" style="display:block; text-align:center; padding:8px; background:#fff; border:1px solid #ccc; font-weight:bold; font-size:13px; color:var(--unal-azul-institucional); border-radius:4px; text-decoration:none;">
+              Consultar Resoluciones y Fechas Oficiales en Registro ↗
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 8: CONTACTO -->
+      <section id="art-contacto" class="article-block" style="border-left:6px solid var(--unal-verde-unal); background:#f0f7ea;">
+        <h2>8. Punto de Contacto y Atención Oficial</h2>
+        <p style="font-size:14.5px; color:#333; margin-bottom:14px;">
+          ¿Tiene inquietudes sobre trámites académicos, movilidad o gestión curricular? Radique su caso en la ventanilla única oficial de la Sede:
+        </p>
+        <a href="https://puntodecontacto.medellin.unal.edu.co" target="_blank" style="display:inline-block; background:var(--unal-verde-unal); color:#06132D; font-weight:800; padding:12px 24px; border-radius:4px; text-decoration:none; font-size:14px;">
+          Radicar en Punto de Contacto ↗
+        </a>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- FOOTER INSTITUCIONAL -->
+  <footer class="unal-main-footer">
+    <div class="unal-main-footer__inner">
+      <div>
+        <strong style="color:#ffffff; font-size:15px;">Universidad Nacional de Colombia · Sede Medellín</strong>
+        <p style="margin-top:6px;">Dirección Académica · Bloque 42, Piso 2 (Campus El Volador)</p>
+        <p style="margin-top:2px;">Carrera 65 Nro. 59A - 110 · Medellín, Colombia</p>
+      </div>
+      <div>
+        <strong style="color:#ffffff;">Canales de Atención</strong>
+        <p style="margin-top:6px;"><a href="https://puntodecontacto.medellin.unal.edu.co" target="_blank">Punto de Contacto Sede ↗</a></p>
+        <p><a href="https://registroymatricula.medellin.unal.edu.co" target="_blank">División de Registro y Matrícula ↗</a></p>
+      </div>
+      <div>
+        <strong style="color:#ffffff;">Portales Relacionados</strong>
+        <p style="margin-top:6px;"><a href="https://unvirtual.medellin.unal.edu.co" target="_blank">Campus Virtual Moodle ↗</a></p>
+        <p><a href="https://sia.unal.edu.co" target="_blank">Sistema SIA ↗</a></p>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:24px; font-size:12px; color:#64748b; border-top:1px solid #1e293b; padding-top:16px;">
+      © 2026 Universidad Nacional de Colombia · Todos los derechos reservados.
+    </div>
+  </footer>
+
+  <!-- SCRIPT PARA NAVEGACIÓN COMPLETA -->
+  <script>
+    var currentImplementationMode = 'web';
+
+    function setImplementationMode(mode) {
+      currentImplementationMode = mode;
+      var btnWeb = document.getElementById('btn-mode-web');
+      var btnArticle = document.getElementById('btn-mode-article');
+      var containerWeb = document.getElementById('container-web');
+      var containerArticle = document.getElementById('container-article');
+      var domainText = document.getElementById('header-domain-text');
+      var subtabsBar = document.getElementById('subtabs-bar');
+
+      if (mode === 'web') {
+        btnWeb.classList.add('active');
+        btnArticle.classList.remove('active');
+        containerWeb.style.display = 'block';
+        containerArticle.style.display = 'none';
+        domainText.innerText = 'academica.medellin.unal.edu.co';
+        subtabsBar.style.display = 'flex';
+        renderNavLinks('web');
+        switchWebPage('inicio');
+      } else {
+        btnArticle.classList.add('active');
+        btnWeb.classList.remove('active');
+        containerWeb.style.display = 'none';
+        containerArticle.style.display = 'block';
+        domainText.innerText = 'medellin.unal.edu.co';
+        subtabsBar.style.display = 'none';
+        renderNavLinks('article');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderNavLinks(mode) {
+      var nav = document.getElementById('nav-links-dynamic');
+      if (mode === 'web') {
+        nav.innerHTML = `
+          <a href="javascript:void(0)" class="current" onclick="switchWebPage('inicio')">Inicio</a>
+          <a href="javascript:void(0)" onclick="switchWebPage('quienes')">Quiénes Somos <span class="nav-caret">▼</span></a>
+          <a href="javascript:void(0)" onclick="switchWebPage('estudiantes')">Estudiantes <span class="nav-caret">▼</span></a>
+          <a href="javascript:void(0)" onclick="switchWebPage('docentes')">Docentes <span class="nav-caret">▼</span></a>
+          <a href="javascript:void(0)" onclick="switchWebPage('convenios')">Convenios</a>
+          <a href="javascript:void(0)" onclick="switchWebPage('externos')">Aspirantes</a>
+        `;
+      } else {
+        nav.innerHTML = `
+          <a href="javascript:void(0)">LA SEDE <span class="nav-caret">▼</span></a>
+          <a href="javascript:void(0)">ESTUDIAR EN LA UNAL <span class="nav-caret">▼</span></a>
+          <a href="javascript:void(0)">FACULTADES <span class="nav-caret">▼</span></a>
+          <a href="javascript:void(0)">INVESTIGACIÓN <span class="nav-caret">▼</span></a>
+          <a href="javascript:void(0)">VIDA UNIVERSITARIA <span class="nav-caret">▼</span></a>
+          <a href="javascript:void(0)">SEDES <span class="nav-caret">▼</span></a>
+        `;
+      }
+    }
+
+    function switchWebPage(pageId) {
+      document.querySelectorAll('.web-page-panel').forEach(function(el) {
+        el.classList.remove('active');
+      });
+      document.querySelectorAll('.proto-tab-btn').forEach(function(el) {
+        el.classList.remove('active');
+      });
+
+      var target = document.getElementById('web-page-' + pageId);
+      if (target) target.classList.add('active');
+
+      var subtabs = document.querySelectorAll('.proto-tab-btn');
+      var pages = ['inicio', 'quienes', 'estudiantes', 'docentes', 'convenios', 'externos'];
+      var idx = pages.indexOf(pageId);
+      if (idx !== -1 && subtabs[idx]) {
+        subtabs[idx].classList.add('active');
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleAcc(el) {
+      var content = el.nextElementSibling;
+      if (content.style.display === 'block') {
+        content.style.display = 'none';
+      } else {
+        content.style.display = 'block';
+      }
+    }
+
+    function filterTeam(area) {
+      document.querySelectorAll('.filter-chip').forEach(function(el) {
+        el.classList.remove('active');
+      });
+      event.target.classList.add('active');
+
+      document.querySelectorAll('.equipo-card').forEach(function(card) {
+        if (area === 'todos' || card.getAttribute('data-area') === area) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Inicialización por defecto en modo web
+    renderNavLinks('web');
+  </script>
+</body>
+</html>
